@@ -13,7 +13,29 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    private RoutePlanFragment routePlanFragment;
+    private EmptyFragment emptyFragment;
     private FragmentManager fragmentManager;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        routePlanFragment = new RoutePlanFragment();
+        emptyFragment = new EmptyFragment();
+
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        fragmentManager = getSupportFragmentManager();
+        switchFragment(routePlanFragment);
+    }
+
+    private void switchFragment(Fragment fragment) {
+        fragmentManager.beginTransaction().replace(R.id.content, fragment).commitAllowingStateLoss();
+    }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -22,30 +44,15 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    fragmentManager.beginTransaction().replace(R.id.content, new RoutePlanFragment()).commitAllowingStateLoss();
+                    switchFragment(routePlanFragment);
                     return true;
                 case R.id.navigation_dashboard:
-                    fragmentManager.beginTransaction().replace(R.id.content, new EmptyFragment()).commitAllowingStateLoss();
-                    return true;
                 case R.id.navigation_notifications:
-                    fragmentManager.beginTransaction().replace(R.id.content, new EmptyFragment()).commitAllowingStateLoss();
+                    switchFragment(emptyFragment);
                     return true;
             }
             return false;
         }
 
     };
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-        fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content, new RoutePlanFragment()).commitAllowingStateLoss();
-    }
-
 }
