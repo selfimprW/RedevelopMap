@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Description:
+ * Description:启动第三方地图app进行"路线规划"
  * Created by Jiacheng on 2017/8/29.
  */
 public class RoutePlanFragment extends Fragment {
