@@ -22,5 +22,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="腾讯" />
+    <Button
+        android:id="@+id/open_google"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Google地图" />
 
 </LinearLayout>

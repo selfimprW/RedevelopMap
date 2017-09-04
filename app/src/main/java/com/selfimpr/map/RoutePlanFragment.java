@@ -55,6 +55,16 @@ public class RoutePlanFragment extends Fragment {
                 }
             }
         });
+        rootView.findViewById(R.id.open_google).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isAvilible("com.google.android.apps.maps")) {
+                    goToGoogleMap("39.987045", "116.50489", "老王家", "39.980171", "116.44487", "隔壁");
+                } else {
+                    Toast.makeText(getActivity(), "未安装Google地图", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         return rootView;
     }
 
@@ -119,6 +129,25 @@ public class RoutePlanFragment extends Fragment {
             intent.setData(Uri.parse("baidumap://map/direction?origin=name:" + sname + "|latlng:" + slat + "," + slon + "&destination=latlng:" + dlat + "," + dlon + "|name:" + dname + "&mode=driving&sy=5&index=0"));
             intent.setPackage("com.baidu.BaiduMap");
             startActivity(intent);
+        } catch (Exception e) {
+            Log.e("wjc", e.toString());
+        }
+    }
+
+    /**
+     * @param slat  起点纬度。如果不填写此参数则自动将用户当前位置设为起点纬度。
+     * @param slon  起点经度。如果不填写此参数则自动将用户当前位置设为起点经度。
+     * @param sname 起点名称
+     * @param dlat  终点纬度
+     * @param dlon  终点经度
+     * @param dname 终点名称
+     */
+    private void goToGoogleMap(String slat, String slon, String sname, String dlat, String dlon, String dname) {
+        try {
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://ditu.google.cn/maps?f=d&source=s_d&saddr=" + slat + "," + slon + "&daddr=" + dlat + "," + dlon + "&hl=zh"));
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK & Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+            i.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+            startActivity(i);
         } catch (Exception e) {
             Log.e("wjc", e.toString());
         }
