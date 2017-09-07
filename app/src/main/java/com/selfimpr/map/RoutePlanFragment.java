@@ -3,6 +3,7 @@ package com.selfimpr.map;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,6 +22,12 @@ import java.util.List;
  * Created by Jiacheng on 2017/8/29.
  */
 public class RoutePlanFragment extends Fragment {
+
+    public static final String PACKAGE_BAI_DU = "com.baidu.BaiduMap";
+    public static final String PACKAGE_GAO_DE = "com.autonavi.minimap";
+    public static final String PACKAGE_TENCENT = "com.tencent.map";
+    public static final String PACKAGE_GOOGLE = "com.google.android.apps.maps";
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -28,7 +35,7 @@ public class RoutePlanFragment extends Fragment {
         rootView.findViewById(R.id.open_baidu).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isAvilible("com.baidu.BaiduMap")) {
+                if (isInstalledBaidu()) {
                     goToBaiduMap("39.987045", "116.50489", "老王家", "39.980171", "116.44487", "隔壁");
                 } else {
                     Toast.makeText(getActivity(), "未安装百度地图", Toast.LENGTH_SHORT).show();
@@ -38,7 +45,7 @@ public class RoutePlanFragment extends Fragment {
         rootView.findViewById(R.id.open_gaode).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isAvilible("com.autonavi.minimap")) {
+                if (isInstalledGaode()) {
                     goToAutonaviMap("39.987045", "116.50489", "老王家", "39.980171", "116.44487", "隔壁");
                 } else {
                     Toast.makeText(getActivity(), "未安装高德地图", Toast.LENGTH_SHORT).show();
@@ -48,7 +55,7 @@ public class RoutePlanFragment extends Fragment {
         rootView.findViewById(R.id.open_tencent).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isAvilible("com.tencent.map")) {
+                if (isInstalledTencent()) {
                     geToTencentMap("39.987045", "116.50489", "老王家", "39.980171", "116.44487", "隔壁");
                 } else {
                     Toast.makeText(getActivity(), "未安装腾讯地图", Toast.LENGTH_SHORT).show();
@@ -58,7 +65,7 @@ public class RoutePlanFragment extends Fragment {
         rootView.findViewById(R.id.open_google).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isAvilible("com.google.android.apps.maps")) {
+                if (isInstalledGoogle()) {
                     goToGoogleMap("39.987045", "116.50489", "老王家", "39.980171", "116.44487", "隔壁");
                 } else {
                     Toast.makeText(getActivity(), "未安装Google地图", Toast.LENGTH_SHORT).show();
@@ -83,7 +90,8 @@ public class RoutePlanFragment extends Fragment {
             String uri = "amapuri://route/plan/?slat=" + slat + "&slon=" + slon + "&sname=" + sname + "&dlat=" + dlat + "&dlon=" + dlon + "&dname=" + dname + "&dev=0&t=0";
             Intent intent = new Intent();
             intent.setData(Uri.parse(uri));
-            intent.setPackage("com.autonavi.minimap");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setPackage(PACKAGE_GAO_DE);
             startActivity(intent);
         } catch (Exception e) {
             Log.e("wjc", e.toString());
@@ -105,7 +113,8 @@ public class RoutePlanFragment extends Fragment {
             String tencnetUri = "qqmap://map/routeplan?type=drive&from=" + sname + "&fromcoord=" + slat + "," + slon + "&to=" + dname + "&tocoord=" + dlat + "," + dlon + "&policy=0&referer=" + getResources().getString(R.string.app_name);
             Intent intent = new Intent();
             intent.setData(Uri.parse(tencnetUri));
-            intent.setPackage("com.tencent.map");
+            intent.setPackage(PACKAGE_TENCENT);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } catch (Exception e) {
             Log.e("wjc", e.toString());
@@ -127,7 +136,8 @@ public class RoutePlanFragment extends Fragment {
             Intent intent = new Intent();
             // 公交路线规划
             intent.setData(Uri.parse("baidumap://map/direction?origin=name:" + sname + "|latlng:" + slat + "," + slon + "&destination=latlng:" + dlat + "," + dlon + "|name:" + dname + "&mode=driving&sy=5&index=0"));
-            intent.setPackage("com.baidu.BaiduMap");
+            intent.setPackage(PACKAGE_BAI_DU);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } catch (Exception e) {
             Log.e("wjc", e.toString());
@@ -144,16 +154,18 @@ public class RoutePlanFragment extends Fragment {
      */
     private void goToGoogleMap(String slat, String slon, String sname, String dlat, String dlon, String dname) {
         try {
-            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://ditu.google.cn/maps?f=d&source=s_d&saddr=" + slat + "," + slon + "&daddr=" + dlat + "," + dlon + "&hl=zh"));
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK & Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-            i.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-            startActivity(i);
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://ditu.google.cn/maps?f=d&source=s_d&saddr=" + slat + "," + slon + "&daddr=" + dlat + "," + dlon + "&hl=zh"));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setPackage(PACKAGE_TENCENT);
+            startActivity(intent);
         } catch (Exception e) {
             Log.e("wjc", e.toString());
         }
     }
 
     /**
+     * todo ：使用这种方式需要获取应用列表权限
+     *
      * @param packageName：应用包名
      * @return 检查手机上是否安装了指定的软件, 有TRUE，没有FALSE
      */
@@ -176,5 +188,37 @@ public class RoutePlanFragment extends Fragment {
         }
         //判断packageNames中是否有目标程序的包名，有TRUE，没有FALSE
         return packageNames.contains(packageName);
+    }
+
+    public boolean isInstalledBaidu() {
+        Intent intent = new Intent();
+        intent.setData(Uri.parse("baidumap://map/direction"));
+        intent.setPackage(PACKAGE_BAI_DU);
+        ResolveInfo resolveInfo = getActivity().getPackageManager().resolveActivity(intent, 0);
+        return resolveInfo != null;
+    }
+
+    public boolean isInstalledGaode() {
+        Intent intent = new Intent();
+        intent.setData(Uri.parse("amapuri://route/plan/"));
+        intent.setPackage(PACKAGE_GAO_DE);
+        ResolveInfo resolveInfo = getActivity().getPackageManager().resolveActivity(intent, 0);
+        return resolveInfo != null;
+    }
+
+    public boolean isInstalledTencent() {
+        Intent intent = new Intent();
+        intent.setData(Uri.parse("qqmap://map/routeplan"));
+        intent.setPackage(PACKAGE_TENCENT);
+        ResolveInfo resolveInfo = getActivity().getPackageManager().resolveActivity(intent, 0);
+        return resolveInfo != null;
+    }
+
+    public boolean isInstalledGoogle() {
+        Intent intent = new Intent();
+        intent.setData(Uri.parse("http://ditu.google.cn/maps"));
+        intent.setPackage(PACKAGE_GOOGLE);
+        ResolveInfo resolveInfo = getActivity().getPackageManager().resolveActivity(intent, 0);
+        return resolveInfo != null;
     }
 }
