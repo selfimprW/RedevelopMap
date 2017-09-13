@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
 
     private RoutePlanFragment routePlanFragment;
     private EmptyFragment emptyFragment;
+    private MapFragment mapFragment;
     private FragmentManager fragmentManager;
 
     @Override
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         routePlanFragment = new RoutePlanFragment();
+        mapFragment = new MapFragment();
         emptyFragment = new EmptyFragment();
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -46,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
                     switchFragment(routePlanFragment);
                     return true;
                 case R.id.navigation_dashboard:
+                    switchFragment(mapFragment);
+                    return true;
                 case R.id.navigation_notifications:
                     switchFragment(emptyFragment);
                     return true;
