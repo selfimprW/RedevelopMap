@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -78,9 +79,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             layoutContainer.setVisibility(View.GONE);
             Toast.makeText(activity, "地图加载失败", Toast.LENGTH_SHORT).show();
         }
-
         getLocationInfo();
-
         return rootView;
     }
 
@@ -149,30 +148,38 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onPause() {
         super.onPause();
-        mMapView.onPause();
+        if (mMapView != null) {
+            mMapView.onPause();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mMapView.onResume();
+        if (mMapView != null) {
+            mMapView.onResume();
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mMapView.onStop();
+        if (mMapView != null) {
+            mMapView.onStop();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mMapView.onDestroy();
+        if (mMapView != null) {
+            mMapView.onDestroy();
+        }
     }
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         //可在此继续其他操作。
         Log.e("wjc", "onRequestPermissionsResult");
@@ -201,6 +208,9 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void locationFail(int error, String reason) {
+                uLatitude = 39.987221;
+                uLongitude = 116.505203;
+                initMapCenter(uLatitude, uLongitude);
                 Toast.makeText(MApplication.getApplication(), "定位失败：" + reason, Toast.LENGTH_SHORT).show();
             }
         });

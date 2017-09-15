@@ -54,6 +54,8 @@ public class TencentLocationHelper implements TencentLocationListener {
     public void refreshLocation(ObtainLocationInfoListener obtainLocationInfoListener) {
         this.obtainLocationInfoListener = obtainLocationInfoListener;
         mLocationManager = TencentLocationManager.getInstance(MApplication.getApplication());
+        // 立即启动高精度室内定位. 启动后，当所在的楼宇支持腾讯的高精度室内定位时，会默认切换到室内定位，离开时自动切换回原定位方式
+        mLocationManager.startIndoorLocation();
         // 设置坐标系为 gcj-02, 缺省坐标为 gcj-02, 所以通常不必进行如下调用
         //mLocationManager.setCoordinateType(TencentLocationManager.COORDINATE_TYPE_GCJ02);
         // 创建定位请求
