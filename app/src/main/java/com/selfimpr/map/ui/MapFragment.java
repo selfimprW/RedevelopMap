@@ -33,7 +33,7 @@ import com.tencent.tencentmap.mapsdk.map.TencentMap;
 import com.tencent.tencentmap.mapsdk.map.UiSettings;
 
 /**
- * description：map相关
+ * description：MapView相关
  * ===============================<br/>
  * creator：Jiacheng<br/>
  * create time：2017/9/13 下午2:27<br/>
