@@ -9,13 +9,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.selfimpr.map.LocationInfo;
 import com.selfimpr.map.MApplication;
 import com.selfimpr.map.R;
 import com.selfimpr.map.tencent.TencentLocationHelper;
@@ -44,6 +47,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     private double uLatitude;
     private double uLongitude;
     private boolean isMapLoaded = false; //地图是否加载完成
+    private String localName;
+    private String localAddress;
     private MapView mMapView;
     private TencentMap tencentMap;
     private FragmentActivity activity;
@@ -120,6 +125,41 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 }
             }
         });
+        //如果不加这行代码，点击marker的时候，会弹一个气泡，很奇怪
+        tencentMap.setOnMarkerClickListener(new TencentMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                if (marker.isInfoWindowShown()) {
+                    marker.hideInfoWindow();
+                } else {
+                    marker.showInfoWindow();
+                }
+                return false;
+            }
+        });
+        tencentMap.setOnInfoWindowClickListener(new TencentMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Toast.makeText(activity, localAddress, Toast.LENGTH_SHORT).show();
+            }
+        });
+        tencentMap.setInfoWindowAdapter(new TencentMap.InfoWindowAdapter() {
+
+            //infoWindow弹出前调用，返回的view将作为弹出的infoWindow
+            @Override
+            public View getInfoWindow(Marker marker) {
+                View infoView = LayoutInflater.from(activity).inflate(R.layout.layout_address_info, null);
+                TextView tvName = (TextView) infoView.findViewById(R.id.name);
+                tvName.setText(localName);
+                tvName.setSelected(true);
+                return infoView;
+            }
+
+            //infoWindow关闭后调用，用户回收View
+            @Override
+            public void onInfoWindowDettached(Marker marker, View view) {
+            }
+        });
     }
 
     private void initMapCenter(double lat, double lon) {
@@ -128,19 +168,14 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         }
         LatLng latLng = new LatLng(lat, lon);
         tencentMap.setCenter(latLng);
-        tencentMap.addMarker(new MarkerOptions()
+        Marker marker = tencentMap.addMarker(new MarkerOptions()
                 .position(latLng)
+                .title(localName)
                 .anchor(0.53f, 0.6f)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_current_location))
                 .draggable(false));
-        //如果不加这行代码，点击marker的时候，会弹一个气泡，很奇怪
-        tencentMap.setOnMarkerClickListener(new TencentMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                Toast.makeText(activity, "click marker", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        });
+        // 设置默认显示一个infoWindow
+        marker.showInfoWindow();
         //设置缩放级别
         tencentMap.setZoom(TENCENT_MAP_ZOOM);
     }
@@ -177,7 +212,6 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -200,9 +234,11 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     public void getLocationInfo() {
         TencentLocationHelper.getLocationHelper().refreshLocation(new TencentLocationHelper.ObtainLocationInfoListener() {
             @Override
-            public void getLocation(TencentLocation location) {
+            public void getLocation(LocationInfo location) {
                 uLongitude = location.getLongitude();
                 uLatitude = location.getLatitude();
+                localName = location.getName();
+                localAddress = location.getAddress();
                 initMapCenter(uLatitude, uLongitude);
             }
 
