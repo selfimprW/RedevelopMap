@@ -1,4 +1,4 @@
-package com.selfimpr.map;
+package com.selfimpr.map.utils;
 
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -6,6 +6,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.util.Log;
+
+import com.selfimpr.map.MApplication;
+import com.selfimpr.map.R;
 
 import java.util.List;
 

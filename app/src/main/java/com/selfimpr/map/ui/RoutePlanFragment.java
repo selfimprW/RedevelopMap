@@ -1,4 +1,4 @@
-package com.selfimpr.map;
+package com.selfimpr.map.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.selfimpr.map.R;
+import com.selfimpr.map.utils.RoutePlanUtil;
 
 /**
  * Description:启动第三方地图app进行"路线规划"
@@ -60,6 +63,4 @@ public class RoutePlanFragment extends Fragment {
         });
         return rootView;
     }
-
-
 }
